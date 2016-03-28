@@ -4,21 +4,41 @@ import matplotlib.pyplot as plt
 # For all these functions, X = n x d numpy array containing the training data
 # where each row of X = one sample and each column of X = one feature.
 
+### Functions for you to fill in ###
 
 # Given principal component vectors produced using
 # pcs = principalComponents(X), 
 # this function returns a new data array in which each sample in X 
 # has been projected onto the first n_components principcal components.
+
+a = np.array([[2,3,1],[2,1,3],[1,0,3]])
+
+
 def projectOntoPC(X, pcs, n_components):
+    Xc = centerData(X)
+    n = n_components
+    V = pcs[:,:n]
+    return np.dot(Xc, V)
+    
     # TODO: first center data using the centerData() function.
     # TODO: Return the projection of the centered dataset 
     #       on the first n_components principal components.
     #       This should be an array with dimensions: n x n_components.
-    return None # TODO: remove this.
+    # Hint: these principal components = first n_components columns 
+    #       of the eigenvectors returned by PrincipalComponents().
+    #       Note that each eigenvector is already be a unit-vector,
+    #       so the projection may be done using matrix multiplication.
+
 
 
 # Returns a new dataset with features given by the mapping 
 # which corresponds to the quadratic kernel.
+
+mat = np.array([[1,2,1],[0,1,2],[1,1,0]])
+row= np.array([[1,2,1],[0,1,2],[1,1,0]])
+
+print np.concatenate((mat, row, mat), axis=1)
+
 def quadraticFeatures(X):
     n, d = X.shape
     X_withones = np.ones((n,d+1))
@@ -27,14 +47,43 @@ def quadraticFeatures(X):
     for j in range(d+1):
         for k in range(j,d+1):
             new_d += 1
+
     newData = np.zeros((n, new_d))
+    X_square = np.square(X)
+    X_single = 2.**0.5 * X
+    
+    X_trans = np.transpose(X)
+
+    l = d * (d-1) / 2
+    X_dual = np.empty((0,n))
+
+
+    #print X_dual
+    
+    for i in range(len(X_trans)):
+        for j in range(i+1,len(X_trans)):
+            X_dual = np.vstack((X_dual, np.multiply(X_trans[i], X_trans[j])))
+    X_dual = 2.**0.5 * np.transpose(X_dual)
+    
+    colone= np.ones((n,1))
+
+    
+    return np.concatenate((X_square, X_single, X_dual, colone), axis=1)
+    
+    
+        
+    
     # TODO: Fill in matrix newData with the correct values given by mapping 
     #       each original sample into the feature space of the quadratic kernel.
     #       Note that newData should have the same number of rows as X, where each
     #       row corresponds to a sample, and the dimensionality of newData has 
     #       already been set to the appropriate value for the quadratic kernel feature mapping.
-    return newData
+    #return newData
+print quadraticFeatures(mat)
 
+
+
+### Functions which are already complete, for you to use ###
 
 # Returns a centered version of the data,
 # where each feature now has mean = 0
